@@ -1,4 +1,4 @@
-function res_vis(cellArray, vars)
+function res_vis(cellArray, vars, filename)
 
 empties = cellfun('isempty', cellArray);
 cellArray(empties)={NaN};
@@ -8,7 +8,7 @@ figure;
 h = heatmap(array_vals);
 h.XLabel='Cell';
 h.YLabel='Object';
-hmTitle=['Relative expression per cell: ' vars.C0file];
+hmTitle=['Relative expression per cell: ' filename];
 h.Title=hmTitle;
 h.MissingDataLabel = 'No data';
 h.Colormap = parula;

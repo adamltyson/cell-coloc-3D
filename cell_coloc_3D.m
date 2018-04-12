@@ -3,9 +3,8 @@
 % each cell is then segmented, and colocalisation with C2 marker assessed
 
 %% TO DO
-% add looping through images - all at beginning
+% sort problem with mult images - missing mult objects
 % add option to only analyse certain images
-% manually segment all at beginning, then do other loading and processing
 % add segmentation export
 % add results export
 %% IMPROVE SEGMENTATION
@@ -23,39 +22,45 @@ files=dir('*C0.tif'); % all tif's in this folder
 numImages=length(files);
 imCount=0;
 
-% vars.C0file='Im1_C0.tif';
+% manually segment objects (e.g spheroids)
 for file=files' % go through all images
-    vars.C0file=file.name;
-     imCount=imCount+1; 
-%% Load images and separate objects
-tmpIm=loadFile(vars.C0file);
-rawIm.C0=tmpIm(1:2:end, 1:2:end,:);
-[analyseIm.binary_C0, objNum] = manSeg(rawIm.C0);
-
-vars.C2file = replace(vars.C0file,'C0','C2');
-tmpIm=loadFile(vars.C2file);
-rawIm.C2=tmpIm(1:2:end, 1:2:end,:);
-clear tmpIm
-%% Analyse
-
-
-[rawIm.C0_indiv, rawIm.C2_indiv] = maskObj(rawIm.C0, rawIm.C2,...
-                            analyseIm.binary_C0, objNum); % mask images
-
-analyseIm.segmentedC0=segment3D(rawIm.C0_indiv, vars); % segment
-
-C2_intMean=indv_cell_coloc(analyseIm.segmentedC0,...
-    rawIm.C2_indiv); % mean C2 fluro per cell, per object
-
-
-if vars.plot
-    res_vis(C2_intMean, vars)
+    imCount=imCount+1; 
+    C0file{imCount}=file.name;
+    
+    % Load images and separate objects
+    tmpIm=loadFile(C0file{imCount});
+    rawC0{imCount}=tmpIm(1:2:end, 1:2:end,:);
+    [binary_C0{imCount}, objNum] = manSeg(rawC0{imCount});
 end
 
-% for export/save
-C2means{imCount}=C2_intMean;
-segmentedImages{imCount}=analyseIm.segmentedC0;
+% Load C2 and analyse each object
+for im=1:imCount 
+    clear analyseIm
+    clear rawIm
+    
+    C2file{im} = replace(C0file{im},'C0','C2');
+    tmpIm=loadFile(C2file{im});
+    rawIm.C2=tmpIm(1:2:end, 1:2:end,:);
+    clear tmpIm 
+
+    [rawIm.C0_indiv, rawIm.C2_indiv] = maskObj(rawC0{im}, rawIm.C2,...
+                                binary_C0{imCount}, objNum); % mask images
+
+    analyseIm.segmentedC0=segment3D(rawIm.C0_indiv, vars); % segment
+
+    C2means=indv_cell_coloc(analyseIm.segmentedC0,...
+        rawIm.C2_indiv); % mean C2 fluro per cell, per object
+
+    if vars.plot
+        res_vis(C2means, vars, C0file{im});
+    end
+
+    % for export/save
+    segmentedImages{im}=analyseIm.segmentedC0;
+    C2meanVals{im}=C2means;
+
 end
+
 toc
 %% Internal functions
 function image=loadFile(file)
