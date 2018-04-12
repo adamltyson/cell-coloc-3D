@@ -3,9 +3,11 @@
 % each cell is then segmented, and colocalisation with C2 marker assessed
 
 %% TO DO
-% add looping through images
+% add looping through images - all at beginning
 % add option to only analyse certain images
 % manually segment all at beginning, then do other loading and processing
+% add segmentation export
+% add results export
 %% IMPROVE SEGMENTATION
 % assess colocalisation - all, binary and intensity based
 
@@ -16,18 +18,27 @@ vars=getVars;
 tic
 cd(vars.directory) 
 
-vars.C0file='Im1_C0.tif';
 
+files=dir('*C0.tif'); % all tif's in this folder
+numImages=length(files);
+imCount=0;
+
+% vars.C0file='Im1_C0.tif';
+for file=files' % go through all images
+    vars.C0file=file.name;
+     imCount=imCount+1; 
 %% Load images and separate objects
 tmpIm=loadFile(vars.C0file);
 rawIm.C0=tmpIm(1:2:end, 1:2:end,:);
 [analyseIm.binary_C0, objNum] = manSeg(rawIm.C0);
 
-vars.C2file = replace(vars.C0file,'T0_C0','T0_C2');
+vars.C2file = replace(vars.C0file,'C0','C2');
 tmpIm=loadFile(vars.C2file);
 rawIm.C2=tmpIm(1:2:end, 1:2:end,:);
 clear tmpIm
 %% Analyse
+
+
 [rawIm.C0_indiv, rawIm.C2_indiv] = maskObj(rawIm.C0, rawIm.C2,...
                             analyseIm.binary_C0, objNum); % mask images
 
@@ -39,6 +50,11 @@ C2_intMean=indv_cell_coloc(analyseIm.segmentedC0,...
 
 if vars.plot
     res_vis(C2_intMean, vars)
+end
+
+% for export/save
+C2means{imCount}=C2_intMean;
+segmentedImages{imCount}=analyseIm.segmentedC0;
 end
 toc
 %% Internal functions
