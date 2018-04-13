@@ -1,9 +1,9 @@
+function cell_coloc_3D
 %% Adam Tyson | 26/03/2018 | adam.tyson@icr.ac.uk
 % loads C0 image (e.g. DAPI), displays, and allows manual seg of each object
 % each cell is then segmented, and colocalisation with C2 marker assessed
 
 %% TO DO
-% sort problem with mult images - missing mult objects
 % add option to only analyse certain images
 % add segmentation export
 % add results export
@@ -17,7 +17,6 @@ vars=getVars;
 tic
 cd(vars.directory) 
 
-
 files=dir('*C0.tif'); % all tif's in this folder
 numImages=length(files);
 imCount=0;
@@ -30,38 +29,36 @@ for file=files' % go through all images
     % Load images and separate objects
     tmpIm=loadFile(C0file{imCount});
     rawC0{imCount}=tmpIm(1:2:end, 1:2:end,:);
-    [binary_C0{imCount}, objNum] = manSeg(rawC0{imCount});
+    [binary_C0{imCount}, objNum{imCount}] = manSeg(rawC0{imCount});
 end
 
 % Load C2 and analyse each object
 for im=1:imCount 
-    clear analyseIm
-    clear rawIm
     
     C2file{im} = replace(C0file{im},'C0','C2');
     tmpIm=loadFile(C2file{im});
-    rawIm.C2=tmpIm(1:2:end, 1:2:end,:);
+    rawC2=tmpIm(1:2:end, 1:2:end,:);
     clear tmpIm 
 
-    [rawIm.C0_indiv, rawIm.C2_indiv] = maskObj(rawC0{im}, rawIm.C2,...
-                                binary_C0{imCount}, objNum); % mask images
+    [rawIm_C0_indiv, rawIm_C2_indiv] = maskObj(rawC0{im}, rawC2,...
+                                binary_C0{im}, objNum{im}); % mask images
+                            
+    segmentedC0=segment3D(rawIm_C0_indiv, vars); % segment
 
-    analyseIm.segmentedC0=segment3D(rawIm.C0_indiv, vars); % segment
-
-    C2means=indv_cell_coloc(analyseIm.segmentedC0,...
-        rawIm.C2_indiv); % mean C2 fluro per cell, per object
+    C2means=indv_cell_coloc(segmentedC0, rawIm_C2_indiv); % mean C2 fluro per cell, per object
 
     if vars.plot
         res_vis(C2means, vars, C0file{im});
     end
 
     % for export/save
-    segmentedImages{im}=analyseIm.segmentedC0;
+    segmentedImages{im}=segmentedC0;
     C2meanVals{im}=C2means;
 
 end
-
 toc
+end
+
 %% Internal functions
 function image=loadFile(file)
     disp(['Loading: ' file])
