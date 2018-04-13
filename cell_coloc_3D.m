@@ -5,14 +5,9 @@ function cell_coloc_3D
 
 %% TO DO
 % add option to only analyse certain images
-% add segmentation export
 % add results export
 %% IMPROVE SEGMENTATION
 % assess colocalisation - all, binary and intensity based
-
-clear
-close
-
 vars=getVars;
 tic
 cd(vars.directory) 
@@ -29,7 +24,7 @@ for file=files' % go through all images
     % Load images and separate objects
     tmpIm=loadFile(C0file{imCount});
     rawC0{imCount}=tmpIm(1:2:end, 1:2:end,:);
-    [binary_C0{imCount}, objNum{imCount}] = manSeg(rawC0{imCount});
+    [bin_C0{imCount}, objNum{imCount}] = manSeg(rawC0{imCount});
 end
 
 % Load C2 and analyse each object
@@ -40,26 +35,56 @@ for im=1:imCount
     rawC2=tmpIm(1:2:end, 1:2:end,:);
     clear tmpIm 
 
-    [rawIm_C0_indiv, rawIm_C2_indiv] = maskObj(rawC0{im}, rawC2,...
-                                binary_C0{im}, objNum{im}); % mask images
+    [rawC0_ind, rawC2_ind] = maskObj(rawC0{im}, rawC2,...
+                                bin_C0{im}, objNum{im}); % mask images
                             
-    segmentedC0=segment3D(rawIm_C0_indiv, vars); % segment
+    segC0=segment3D(rawC0_ind, vars); % segment
 
-    C2means=indv_cell_coloc(segmentedC0, rawIm_C2_indiv); % mean C2 fluro per cell, per object
+    C2means=indv_cell_coloc(segC0, rawC2_ind); % mean C2 fluro per cell, 
+                                                %per object
 
     if vars.plot
         res_vis(C2means, vars, C0file{im});
     end
 
     % for export/save
-    segmentedImages{im}=segmentedC0;
-    C2meanVals{im}=C2means;
+%     C2meanVals{im}=C2means;
 
+    if vars.saveSegmentation
+        saveSegmentation(objNum, rawC0_ind, rawC2_ind, segC0,...
+                                                    im, C0file, C2file) 
+    end
 end
+
 toc
 end
 
 %% Internal functions
+
+function saveSegmentation(objNum, rawC0_ind, rawC2_ind, segC0,...
+                                                     im, C0file, C2file)
+
+for obj=1:objNum{im}
+    
+    C0raw_tmp=rawC0_ind{obj};
+    C2raw_tmp=rawC2_ind{obj};
+    C0seg_tmp=segC0{obj};
+
+    outC0_raw=['raw_obj_' num2str(obj) '_' C0file{im}];
+    outC2_raw=['raw_obj_' num2str(obj) '_' C2file{im}];
+    outC0_seg=['seg_obj_' num2str(obj) '_' C0file{im}];
+
+    for frame=1:size(C0raw_tmp,3)
+        imwrite(C0raw_tmp(:,:,frame),outC0_raw,...
+            'tif','WriteMode', 'append', 'compression', 'none');
+        imwrite(C2raw_tmp(:,:,frame),outC2_raw,...
+            'tif', 'WriteMode', 'append', 'compression', 'none');
+        imwrite(C0seg_tmp(:,:,frame),outC0_seg,...
+            'tif', 'WriteMode', 'append', 'compression', 'none');
+    end
+end
+end
+
 function image=loadFile(file)
     disp(['Loading: ' file])
     info = imfinfo(file);
@@ -177,3 +202,5 @@ function vars=getVars
     
     vars.fontSize=14;
 end
+
+
