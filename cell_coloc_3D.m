@@ -1,11 +1,12 @@
-function cell_coloc_3D
+% function cell_coloc_3D
 %% Adam Tyson | 26/03/2018 | adam.tyson@icr.ac.uk
 % loads C0 image (e.g. DAPI), displays, and allows manual seg of each object
 % each cell is then segmented, and colocalisation with C2 marker assessed
 
 %% TO DO
 % add option to only analyse certain images
-% add results export
+% improve results export - more detail
+% add progress bar
 %% IMPROVE SEGMENTATION
 % assess colocalisation - all, binary and intensity based
 vars=getVars;
@@ -43,23 +44,31 @@ for im=1:imCount
     C2means=indv_cell_coloc(segC0, rawC2_ind); % mean C2 fluro per cell, 
                                                 %per object
 
-    if vars.plot
+    if strcmp(vars.plot, 'Yes')  
         res_vis(C2means, vars, C0file{im});
     end
 
-    % for export/save
-%     C2meanVals{im}=C2means;
-
-    if vars.saveSegmentation
+    if strcmp(vars.saveSegmentation, 'Yes')  
         saveSegmentation(objNum, rawC0_ind, rawC2_ind, segC0,...
                                                     im, C0file, C2file) 
     end
+    
+    if strcmp(vars.savecsv, 'Yes')  
+        save_res(C0file, vars, C2means, im)
+    end
+
 end
 
 toc
-end
+% end
 
 %% Internal functions
+function save_res(C0file, vars, C2means, im)
+    [~, nametmp,~] = fileparts(C0file{im});
+    csvname = [nametmp '_' vars.stamp '.csv'];
+    results_Table=cell2table(C2means);
+    writetable(results_Table, csvname)
+end
 
 function saveSegmentation(objNum, rawC0_ind, rawC2_ind, segC0,...
                                                      im, C0file, C2file)
@@ -169,7 +178,7 @@ end
 function vars=getVars
     vars.directory = uigetdir('', 'Choose directory containing images');
     
-        vars.saveTrace = questdlg('Save results as .csv?', ...
+        vars.savecsv = questdlg('Save results as .csv?', ...
 	'Exporting', ...
 	'Yes', 'No', 'Yes');
 
