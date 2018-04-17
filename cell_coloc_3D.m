@@ -6,7 +6,6 @@
 %% TO DO
 % add option to only analyse certain images
 % improve results export - more detail
-% add progress bar
 %% IMPROVE SEGMENTATION
 % assess colocalisation - all, binary and intensity based
 vars=getVars;
@@ -29,8 +28,10 @@ for file=files' % go through all images
 end
 
 % Load C2 and analyse each object
+progressbar('Analysing images') % Init prog bar
+count=0;
 for im=1:imCount 
-    
+    count=count+1; 
     C2file{im} = replace(C0file{im},'C0','C2');
     tmpIm=loadFile(C2file{im});
     rawC2=tmpIm(1:2:end, 1:2:end,:);
@@ -56,7 +57,10 @@ for im=1:imCount
     if strcmp(vars.savecsv, 'Yes')  
         save_res(C0file, vars, C2means, im)
     end
-
+    
+    % progress bar
+    frac1 =count/numImages;
+    progressbar(frac1)
 end
 
 toc
