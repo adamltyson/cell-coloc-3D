@@ -5,7 +5,10 @@
 
 %% TO DO
 % add option to only analyse certain images
-% improve results export - more detail
+% option to remove cells at edge
+% save volume of object 
+% save volumes of cells
+% add readme
 %% IMPROVE SEGMENTATION
 % assess colocalisation - all, binary and intensity based
 vars=getVars;
@@ -26,6 +29,8 @@ for file=files' % go through all images
     rawC0{imCount}=tmpIm(1:2:end, 1:2:end,:);
     [bin_C0{imCount}, objNum{imCount}] = manSeg(rawC0{imCount});
 end
+objectInfo=cell(2, imCount);
+objectInfo{1,1}= "Number of cells per object ";
 
 % Load C2 and analyse each object
 progressbar('Analysing images') % Init prog bar
@@ -41,7 +46,12 @@ for im=1:imCount
                                 bin_C0{im}, objNum{im}); % mask images
                             
     segC0=segment3D(rawC0_ind, vars); % segment
-
+    
+    % get number of cells in each object, per image
+    [~, nametmp,~] = fileparts(C0file{im});
+    objectInfo{1, im+1}= strcat("Image_", nametmp);
+    objectInfo{2, im+1} = cellfun(@(x) max(x(:)-1), segC0);
+    
     C2means=indv_cell_coloc(segC0, rawC2_ind); % mean C2 fluro per cell, 
                                                 %per object
 
@@ -55,7 +65,7 @@ for im=1:imCount
     end
     
     if strcmp(vars.savecsv, 'Yes')  
-        save_res(C0file, vars, C2means, im)
+        save_raw_res(C0file, C2means, im)
     end
     
     % progress bar
@@ -63,15 +73,43 @@ for im=1:imCount
     progressbar(frac1)
 end
 
+if strcmp(vars.savecsv, 'Yes')  
+    save_summary_res(objectInfo)
+end
+    
 toc
 % end
 
 %% Internal functions
-function save_res(C0file, vars, C2means, im)
+
+function save_summary_res(objectInfo)
+    csvname="summary_results.csv";
+    results_Table=cell2table(objectInfo);
+    writetable(results_Table, csvname, 'WriteVariableNames', 0)
+
+end
+
+function save_raw_res(C0file, raw_results, im)
     [~, nametmp,~] = fileparts(C0file{im});
-    csvname = [nametmp '_' vars.stamp '.csv'];
-    results_Table=cell2table(C2means);
-    writetable(results_Table, csvname)
+    csvname = ['obj_cell_means_' nametmp '.csv'];
+    
+    % add labels 
+    sze=size(raw_results);
+    blankY=cell(sze(1),1);
+    blankX=cell(1, sze(2)+1);
+    raw_results=[blankY raw_results];
+    raw_results=[blankX; raw_results];
+
+    for cellnum=1:sze(2)
+        raw_results{1, cellnum+1}=strcat("Cell_", num2str(cellnum));
+    end
+    
+    for obj=1:sze(1)
+        raw_results{obj+1,1}=strcat("Object_", num2str(obj));
+    end
+        
+    results_Table=cell2table(raw_results);
+    writetable(results_Table, csvname, 'WriteVariableNames', 0)
 end
 
 function saveSegmentation(objNum, rawC0_ind, rawC2_ind, segC0,...
