@@ -3,7 +3,7 @@
 
 ### Allows manual identification of individual objects in a 3D image. Cells in each object are automatically segmented, and various parameters are returned, including intensity of a secondary marker in a different channel.
 
-####N.B. needs a recent version of MATLAB and the Image Processing Toolbox. Should work on Windows/OSX/Linux.
+#### N.B. needs a recent version of MATLAB and the Image Processing Toolbox. Should work on Windows/OSX/Linux.
 
 # Instructions (set up):
 
