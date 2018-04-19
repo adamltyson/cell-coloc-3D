@@ -6,7 +6,6 @@
 %% TO DO
 % add option to only analyse certain images
 % option to remove cells at edge
-% save volume of object (convex bounding)
 % update README for new outputs
 % remove multiple (slow) calls to bwconvhull
 %% IMPROVE SEGMENTATION
@@ -270,12 +269,12 @@ prompt = {'Segmentation threshold (a.u.):',...
 
 dlg_title = 'Analysis variables';
 num_lines = 1;
-defaultans = {'1.2', '3', '1000', '1000', '4'};
+defaultans = {'1.2', '3', '1000', '3000', '4'};
 answer = inputdlg(prompt,dlg_title,num_lines,defaultans);
 vars.threshScale=str2double(answer{1});%change sensitivity of threshold
 vars.smoothSigma=str2double(answer{2});% smoothing kernel
 vars.holeSize=str2double(answer{3});% largest hole to fill
-vars.noiseRemoval=str2double(answer{4}); % smallest obj to remove
+vars.noiseRem=str2double(answer{4}); % smallest obj to remove
 vars.localMaxThresh=str2double(answer{5});% ws int marker threshold
 
 vars.stamp=num2str(fix(clock)); % date and time
