@@ -1,5 +1,5 @@
 function [C2_intMean, C0_cell_size, objBoundVol]=indv_cell_coloc(segCell, C2_indiv)
-%% Adam Tyson | 27/03/2018 | adam.tyson@icr.ac.uk
+%% Adam Tyson | 2018-03-27 | adam.tyson@icr.ac.uk
 % function to take segmented images of cells, mask a second channel, and
 % return mean fluroescence.
 % also returns mean cell size

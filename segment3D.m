@@ -1,5 +1,5 @@
 function separatedIm=segment3D(imCell, vars)
-%% Adam Tyson | 26/03/2018 | adam.tyson@icr.ac.uk
+%% Adam Tyson | 2018-03-26 | adam.tyson@icr.ac.uk
 %takes a cell array of individual objects, segments and returns a cell
 %array of separated cells
 

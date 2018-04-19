@@ -1,5 +1,5 @@
 % function cell_coloc_3D
-%% Adam Tyson | 26/03/2018 | adam.tyson@icr.ac.uk
+%% Adam Tyson | 2018-03-26 | adam.tyson@icr.ac.uk
 % loads C0 image (e.g. DAPI), displays, and allows manual seg of each object
 % each cell is then segmented, and colocalisation with C2 marker assessed
 
