@@ -41,8 +41,7 @@ f = waitbar(0,'1','Name','Analysing images...');
 count=0;
 for im=1:imCount
     count=count+1;
-    [~, nametmp,~] = fileparts(C0file{im});
-    waitbar(count/numImages,f,strcat("Analysing Image: ", nametmp))
+    waitbar(count/numImages,f,strcat("Analysing Image: ", num2str(count)))
 
     C2file{im} = replace(C0file{im},'C0','C2');
     tmpIm=loadFile(C2file{im});
@@ -58,6 +57,7 @@ for im=1:imCount
     [C0sizes, C2means, objBoundVol]=indv_cell_coloc(segC0, rawC2_ind);
     
     %% summary results
+    [~, nametmp,~] = fileparts(C0file{im});
     objInf{1, im+1}= strcat("Image_", nametmp);
     objInf{2, im+1} = cellfun(@(x) max(x(:)), segC0); % no cells per obj
     objInf{3, im+1} = cellfun(@(x) nnz(x>0), segC0); % vol obj (cells)
