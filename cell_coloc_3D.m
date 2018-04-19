@@ -54,7 +54,7 @@ for im=1:imCount
     [~, nametmp,~] = fileparts(C0file{im});
     objInf{1, im+1}= strcat("Image_", nametmp);
     objInf{2, im+1} = cellfun(@(x) max(x(:)), segC0); % no cells per obj
-    objInf{3, im+1} = cellfun(@(x) sum(sum(sum(x>0))), segC0); % vol obj
+    objInf{3, im+1} = cellfun(@(x) nnz(x>0), segC0); % vol obj
 
     %%
     
