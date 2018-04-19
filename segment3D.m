@@ -5,7 +5,7 @@ function separatedIm=segment3D(imCell, vars)
 
 %% TO DO
 % make ws better
-
+conn_3d=26; % 3D connectivity
 for object=1:length(imCell)
 
     image=imCell{object};
@@ -24,16 +24,22 @@ for object=1:length(imCell)
         im.closed(:,:,z)=~(bwareaopen(~im.thresh(:,:,z), vars.holeSize));
     end
     
-    im.opened=bwareaopen(im.closed,vars.noiseRem); % remove small objs
-    im.ws=ws3d(im.opened, vars); %watershed
-    im.opened2=bwareaopen(im.ws,vars.noiseRem); % again, after ws
-    separatedIm{object} = bwlabeln(im.opened2); %opening removes labels
+    im.open=bwareaopen(im.closed,vars.noiseRem); % remove small objs
+    im.ws=ws3d(im.open, vars, conn_3d); %watershed
+    im.open2=bwareaopen(im.ws,vars.noiseRem); % again, after ws
+    
+    if strcmp(vars.edgeRem, 'Yes')
+        im.edgeRem = imclearborder(im.open2, conn_3d); % clear obj at edges
+    else
+        im.edgeRem=im.open2;
+    end
+    
+    separatedIm{object} = bwlabeln(im.edgeRem); %opening removes labels
     
     clear im
 end
 
-function separatedImage=ws3d(im3d, vars)
-localMaxConn=26;
+function separatedImage=ws3d(im3d, vars, conn_3d)
 sze=size(im3d);% size of array for initalising
 %% external markers
 distTran=bwdist(im3d); % distance transform of positive data
@@ -43,8 +49,7 @@ extMark(wsExt==0)=1; % markers between cells
 
 %% internal markers
 negDistTran=bwdist(~im3d);
-intMark = imextendedmax(negDistTran,...
-    vars.localMaxThresh,localMaxConn);
+intMark = imextendedmax(negDistTran, vars.localMaxThresh,conn_3d);
 
 %% impose these minima onto the distance transform and run watershed
 watershedBasins = imimposemin(distTran, intMark | extMark);

@@ -23,6 +23,7 @@
     * **Maximum hole size** - how big a "hole" inside a cell should be filled
     * **Largest false cell to remove** - how big can bright spots outside the main mass of cells be and still be ignored by the analysis
     * **Watershed threshold** - how stringent to be to separate cells after thresholding
+    * **Remove edge objects** - remove objects touching the edge of the image (mostly useful for incomplete z aqusition)
 
 # Instructions (use):
 

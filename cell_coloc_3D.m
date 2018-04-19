@@ -5,7 +5,7 @@
 
 %% TO DO
 % add option to only analyse certain images
-% option to remove cells at edge
+% removal of any big (double) cells
 % update README for new outputs
 % remove multiple (slow) calls to bwconvhull
 %% IMPROVE SEGMENTATION
@@ -28,6 +28,7 @@ for file=files' % go through all images
     rawC0{imCount}=tmpIm(1:2:end, 1:2:end,:);
     [bin_C0{imCount}, objNum{imCount}] = manSeg(rawC0{imCount});
 end
+
 objInf=cell(2, imCount);
 objInf{2,1}= "Number of cells per object";
 objInf{3,1}= "Total volume of object (nuclei only)";
@@ -261,7 +262,7 @@ vars.saveSegmentation= questdlg('Save segmentation as.tif?', ...
     'Saving segmentation', ...
     'Yes', 'No', 'No');
 
-vars.saveSegmentation= questdlg('Remove edge objects?', ...
+vars.edgeRem= questdlg('Remove edge objects?', ...
     'Clear edges', ...
     'Yes', 'No', 'Yes');
 
