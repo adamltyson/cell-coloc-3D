@@ -10,7 +10,9 @@ function C2_intMean=indv_cell_coloc(segCell, C2_indiv)
 for obj=1:length(segCell)
     objSeg=segCell{obj};
     C2im=C2_indiv{obj};
-     for cell=2:max(objSeg(:)) % first "cell" is oversegmented noise
+     for cell=1:max(objSeg(:)) 
+         % orig note-  "first "cell" is oversegmented noise"
+         % not sure what this referred to
 
         tmpIm=objSeg;
         tmpIm(tmpIm~=cell)=0; % not sure why have to use -ve
@@ -22,7 +24,7 @@ for obj=1:length(segCell)
         end
         
         maskedC2=mask.*double(C2im);
-        C2_intMean{obj, cell-1}=mean(nonzeros(maskedC2(:))); % non-zero mean
+        C2_intMean{obj, cell}=mean(nonzeros(maskedC2(:))); % non-zero mean
     end
 end
 
