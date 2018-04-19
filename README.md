@@ -9,18 +9,18 @@
     * Image to segment must end **C0.tif** and the other marker must end **C2.tif** (can obviously be changed).
 2. Clone or download repository (e.g. **Clone or download -> Download ZIP**, then unzip **cell-coloc-3D-master.zip**).
 3. Place whole directory in the MATLAB path (e.g. C:\\Users\\User\\Documents\\MATLAB).
-4. Open cell-coloc-3D\\cell_coloc_3D and run (F5 or the green "Run" arrow under the "EDITOR" tab). Alternatively, type "cell_coloc_3" into the Command Window and press ENTER
+4. Open cell-coloc-3D\\cell_coloc_3D and run (F5 or the green "Run" arrow under the "EDITOR" tab). Alternatively, type *cell_coloc_3* into the Command Window and press ENTER
 5. Choose a directory that contains the images.
 6. Choose various options:
-    * Save results as csv - all the results will be exported as a .csv for plotting and statistics.
-    * Plot individual heat maps - displays marker intensity, per cell, per object (one figure per image). Useful for testing.
-    * Save segmentation - export the segmentation mask (along will all manually cropped objects) as a .tif file to for troubleshooting or later analysis.   
-7. Confirm or change options (the defaults can be changed under "function vars=getVars" in cell_coloc_3D.m
-    * Segmentation threshold -  increase to be more stringent on what is a cell (and vice versa)
-    * Smoothing width - how much to smooth before thresholding (proportional to cell size)
-    * Maximum hole size - how big a "hole" inside a cell should be filled
-    * Largest false cell to remove - how big can bright spots outside the main mass of cells be and still be ignored by the analysis
-    * Watershed threshold - how stringent to be to separate cells after thresholding
+    * **Save results as csv** - all the results will be exported as a .csv for plotting and statistics.
+    * **Plot individual heat maps** - displays marker intensity, per cell, per object (one figure per image). Useful for testing.
+    * **Save segmentation** - export the segmentation mask (along will all manually cropped objects) as a .tif file to for troubleshooting or later analysis.   
+7. Confirm or change options (the defaults can be changed under *function vars=getVars* in cell_coloc_3D.m
+    * **Segmentation threshold** -  increase to be more stringent on what is a cell (and vice versa)
+    * **Smoothing width** - how much to smooth before thresholding (proportional to cell size)
+    * **Maximum hole size** - how big a "hole" inside a cell should be filled
+    * **Largest false cell to remove** - how big can bright spots outside the main mass of cells be and still be ignored by the analysis
+    * **Watershed threshold** - how stringent to be to separate cells after thresholding
 
 # Instructions (use):
 
@@ -28,8 +28,8 @@ The script will then present each image (C0) channel as a maximum projection and
 
 The script will then loop through all the images in the chosen folder. Each image will be processed in turn, and a number of parameters will be saved (if specified):
 
-  * marker_mean_intensity_IMAGE.csv - mean intensity, per cell, per object of the secondary marker.
-  * cell_sizes_IMAGE.csv - volume (in voxels) each cell, per object.
-  * summary_results.csv - includes the number of cells per object, per image, and the total volume of the objects.
+  * **marker_mean_intensity_IMAGE.csv** - mean intensity, per cell, per object of the secondary marker.
+  * **cell_sizes_IMAGE.csv** - volume (in voxels) each cell, per object.
+  * **summary_results.csv** - includes the number of cells per object, per image, and the total volume of the objects.
 
 Once the first image has been analysed, the progress bar will give an estimate of the remaining time.
