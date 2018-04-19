@@ -7,8 +7,6 @@
 % add option to only analyse certain images
 % option to remove cells at edge
 % save volume of object (convex bounding)
-% save volumes of cells
-% add readme
 %% IMPROVE SEGMENTATION
 vars=getVars;
 tic
@@ -49,17 +47,14 @@ for im=1:imCount
     segC0=segment3D(rawC0_ind, vars); % segment
     
     %% summary results
-    
-    % get number of cells in each object, per image
     [~, nametmp,~] = fileparts(C0file{im});
     objInf{1, im+1}= strcat("Image_", nametmp);
     objInf{2, im+1} = cellfun(@(x) max(x(:)), segC0); % no cells per obj
     objInf{3, im+1} = cellfun(@(x) nnz(x>0), segC0); % vol obj
 
     %%
-    
-    [C0sizes C2means]=indv_cell_coloc(segC0, rawC2_ind); % mean C2 fluro per cell, 
-                                                %per object
+    % mean C2 fluro per cell, per object
+    [C0sizes, C2means]=indv_cell_coloc(segC0, rawC2_ind); 
 
     if strcmp(vars.plot, 'Yes')  
         res_vis(C2means, vars, C0file{im});
@@ -95,9 +90,11 @@ function save_summary_res(objectInfo)
 end
 
 function save_raw_res(C0file, C0sizes, C2means, im)
+    % tidy up
+    
+    %% mean marker intensities
     [~, nametmp,~] = fileparts(C0file{im});
     csvname = ['marker_mean_intensity_' nametmp '.csv'];
-    csvname2 = ['cell_sizes_' nametmp '.csv'];
 
     % add labels 
     sze=size(C2means);
@@ -117,7 +114,10 @@ function save_raw_res(C0file, C0sizes, C2means, im)
     results_Table=cell2table(C2means);
     writetable(results_Table, csvname, 'WriteVariableNames', 0)
     
-        % add labels 
+    %% mean cell sizes
+    csvname2 = ['cell_sizes_' nametmp '.csv'];
+
+    % add labels 
     sze=size(C0sizes);
     blankY=cell(sze(1),1);
     blankX=cell(1, sze(2)+1);
