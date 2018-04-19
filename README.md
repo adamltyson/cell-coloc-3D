@@ -1,11 +1,11 @@
-## cell-coloc-3D
-# Adam Tyson | 2018-04-19 | adam.tyson@icr.ac.uk
+# cell-coloc-3D
+### Adam Tyson | 2018-04-19 | adam.tyson@icr.ac.uk
 
 ## Allows manual identification of individual objects in a 3D image. Cells in each object are automatically segmented, and various parameters are returned, including intensity of a secondary marker in a different channel.
 
 # Instructions (set up):
 
-1. - Export 3D image as multipage tiff (default if <4GB in Slidebook). All images can be saved into the same directory.
+1. Export 3D image as multipage tiff (default if <4GB in Slidebook). All images can be saved into the same directory.
     * Image to segment must end **C0.tif** and the other marker must end **C2.tif** (can obviously be changed).
 2. Clone or download repository, and if necessary unzip **cell-coloc-3D-master.zip**.
 3. Place whole directory in the MATLAB path (e.g. C:\\Users\\User\\Documents\\MATLAB).
@@ -27,6 +27,7 @@
 The script will then present each image (C0) channel as a maximum projection and prompt for each object to be drawn around (click and use mouse). An option will be given after each object is drawn to repeat that object (in case of mistake), or move onto the next. Another option will also be presented to stop manually segmenting that image, and move onto the next.   
 
 The script will then loop through all the images in the chosen folder. Each image will be processed in turn, and a number of parameters will be saved (if specified):
+
     * marker_mean_intensity_IMAGE.csv - mean intensity, per cell, per object of the secondary marker.
     * cell_sizes_IMAGE.csv - volume (in voxels) each cell, per object.
     * summary_results.csv - includes the number of cells per object, per image, and the total volume of the objects.
