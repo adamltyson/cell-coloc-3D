@@ -269,7 +269,7 @@ prompt = {'Segmentation threshold (a.u.):',...
 
 dlg_title = 'Analysis variables';
 num_lines = 1;
-defaultans = {'1.2', '3', '1000', '3000', '4'};
+defaultans = {'1.2', '3', '1000', '1000', '4'};
 answer = inputdlg(prompt,dlg_title,num_lines,defaultans);
 vars.threshScale=str2double(answer{1});%change sensitivity of threshold
 vars.smoothSigma=str2double(answer{2});% smoothing kernel

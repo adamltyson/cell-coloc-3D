@@ -1,4 +1,4 @@
-function separatedImages=segment3D(imCell, vars)
+function separatedIm=segment3D(imCell, vars)
 %% Adam Tyson | 26/03/2018 | adam.tyson@icr.ac.uk
 %takes a cell array of individual objects, segments and returns a cell
 %array of separated cells
@@ -23,8 +23,11 @@ for object=1:length(imCell)
         im.closed(:,:,z)=~(bwareaopen(~im.thresh(:,:,z), vars.holeSize));
     end
     
-    imopened=bwareaopen(im.closed,vars.noiseRemoval); % remove small objs
-    separatedImages{object}=ws3d(imopened, vars); %watershed
+    im.opened=bwareaopen(im.closed,vars.noiseRem); % remove small objs
+    im.ws=ws3d(im.opened, vars); %watershed
+    im.opened2=bwareaopen(im.ws,vars.noiseRem); % again, after ws
+    separatedIm{object} = bwlabeln(im.opened2); %opening removes labels
+    
     clear im
 end
 
