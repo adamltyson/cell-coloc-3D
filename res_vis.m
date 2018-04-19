@@ -1,5 +1,4 @@
 function res_vis(cellArray, vars, filename)
-
 empties = cellfun('isempty', cellArray);
 cellArray(empties)={NaN};
 array_vals=cell2mat(cellArray);
