@@ -6,9 +6,8 @@
 %% TO DO
 % add option to only analyse certain images
 % option to remove cells at edge
-% save volume of object 
+% save volume of object (convex bounding)
 % save volumes of cells
-% more detailed progress bar
 % add readme
 %% IMPROVE SEGMENTATION
 vars=getVars;
@@ -29,12 +28,13 @@ for file=files' % go through all images
     rawC0{imCount}=tmpIm(1:2:end, 1:2:end,:);
     [bin_C0{imCount}, objNum{imCount}] = manSeg(rawC0{imCount});
 end
-objectInfo=cell(2, imCount);
-objectInfo{2,1}= "Number of cells per object";
-% objectInfo{3,1}= "Total volume of object (nuclei only)";
+objInf=cell(2, imCount);
+objInf{2,1}= "Number of cells per object";
+objInf{3,1}= "Total volume of object (nuclei only)";
 
 % Load C2 and analyse each object
 progressbar('Analysing images') % Init prog bar
+
 count=0;
 for im=1:imCount 
     count=count+1; 
@@ -52,8 +52,9 @@ for im=1:imCount
     
     % get number of cells in each object, per image
     [~, nametmp,~] = fileparts(C0file{im});
-    objectInfo{1, im+1}= strcat("Image_", nametmp);
-    objectInfo{2, im+1} = cellfun(@(x) max(x(:)), segC0);
+    objInf{1, im+1}= strcat("Image_", nametmp);
+    objInf{2, im+1} = cellfun(@(x) max(x(:)), segC0); % no cells per obj
+    objInf{3, im+1} = cellfun(@(x) sum(sum(sum(x>0))), segC0); % vol obj
 
     %%
     
@@ -79,7 +80,7 @@ for im=1:imCount
 end
 
 if strcmp(vars.savecsv, 'Yes')  
-    save_summary_res(objectInfo)
+    save_summary_res(objInf)
 end
     
 toc
