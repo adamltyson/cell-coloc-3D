@@ -58,7 +58,7 @@ for im=1:imCount
 
     %%
     
-    C2means=indv_cell_coloc(segC0, rawC2_ind); % mean C2 fluro per cell, 
+    [C0sizes C2means]=indv_cell_coloc(segC0, rawC2_ind); % mean C2 fluro per cell, 
                                                 %per object
 
     if strcmp(vars.plot, 'Yes')  
@@ -71,7 +71,7 @@ for im=1:imCount
     end
     
     if strcmp(vars.savecsv, 'Yes')  
-        save_raw_res(C0file, C2means, im)
+        save_raw_res(C0file, C0sizes, C2means, im)
     end
     
     % progress bar
@@ -94,27 +94,47 @@ function save_summary_res(objectInfo)
     writetable(results_Table, csvname, 'WriteVariableNames', 0)
 end
 
-function save_raw_res(C0file, results, im)
+function save_raw_res(C0file, C0sizes, C2means, im)
     [~, nametmp,~] = fileparts(C0file{im});
-    csvname = ['obj_cell_means_' nametmp '.csv'];
-    
+    csvname = ['marker_mean_intensity_' nametmp '.csv'];
+    csvname2 = ['cell_sizes_' nametmp '.csv'];
+
     % add labels 
-    sze=size(results);
+    sze=size(C2means);
     blankY=cell(sze(1),1);
     blankX=cell(1, sze(2)+1);
-    results=[blankY results];
-    results=[blankX; results];
+    C2means=[blankY C2means];
+    C2means=[blankX; C2means];
 
     for cellnum=1:sze(2)
-        results{1, cellnum+1}=strcat("Cell_", num2str(cellnum));
+        C2means{1, cellnum+1}=strcat("Cell_", num2str(cellnum));
     end
     
     for obj=1:sze(1)
-        results{obj+1,1}=strcat("Object_", num2str(obj));
+        C2means{obj+1,1}=strcat("Object_", num2str(obj));
     end
         
-    results_Table=cell2table(results);
+    results_Table=cell2table(C2means);
     writetable(results_Table, csvname, 'WriteVariableNames', 0)
+    
+        % add labels 
+    sze=size(C0sizes);
+    blankY=cell(sze(1),1);
+    blankX=cell(1, sze(2)+1);
+    C0sizes=[blankY C0sizes];
+    C0sizes=[blankX; C0sizes];
+
+    for cellnum=1:sze(2)
+        C0sizes{1, cellnum+1}=strcat("Cell_", num2str(cellnum));
+    end
+    
+    for obj=1:sze(1)
+        C0sizes{obj+1,1}=strcat("Object_", num2str(obj));
+    end
+        
+    results_Table2=cell2table(C0sizes);
+    writetable(results_Table2, csvname2, 'WriteVariableNames', 0)
+    
 end
 
 function saveSegmentation(objNum, rawC0_ind, rawC2_ind, segC0,...

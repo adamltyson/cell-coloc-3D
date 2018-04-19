@@ -1,7 +1,8 @@
-function C2_intMean=indv_cell_coloc(segCell, C2_indiv)
+function [C2_intMean, C0_cell_size]=indv_cell_coloc(segCell, C2_indiv)
 %% Adam Tyson | 27/03/2018 | adam.tyson@icr.ac.uk
 % function to take segmented images of cells, mask a second channel, and
 % return mean fluroescence.
+% also returns mean cell size
 
 %% TO DO
 % remove loops
@@ -18,7 +19,9 @@ for obj=1:length(segCell)
         tmpIm(tmpIm~=cell)=0; % not sure why have to use -ve
         tmpIm(tmpIm>0)=1;
         
-         mask=zeros(size(tmpIm));
+        C0_cell_size{obj, cell}=nnz(tmpIm>0); % num non-zero elements
+        
+        mask=zeros(size(tmpIm));
         for z=1:size(tmpIm,3)
           mask(:,:,z) = bwconvhull(tmpIm(:,:,z));
         end
