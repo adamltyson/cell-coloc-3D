@@ -7,6 +7,7 @@ function separatedIm=segment3D(imCell, vars)
 % make ws better
 
 for object=1:length(imCell)
+
     image=imCell{object};
     im.smoothed=zeros(size(image));
     

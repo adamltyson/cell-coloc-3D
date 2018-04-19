@@ -9,6 +9,7 @@ function [C2_intMean, C0_cell_size, objBoundVol]=indv_cell_coloc(segCell, C2_ind
 % check picking cells individually
 
 for obj=1:length(segCell)
+
     objSeg=segCell{obj};
     
     % vol of object (using convex bounding box)

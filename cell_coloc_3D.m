@@ -35,11 +35,14 @@ objInf{4,1}= "Total volume of object (convex bounding)";
 objInf{5,1}= "Object density";
 
 % Load C2 and analyse each object
-progressbar('Analysing images') % Init prog bar
+f = waitbar(0,'1','Name','Analysing images...');
 
 count=0;
 for im=1:imCount
     count=count+1;
+    [~, nametmp,~] = fileparts(C0file{im});
+    waitbar(count/numImages,f,strcat("Analysing Image: ", nametmp))
+
     C2file{im} = replace(C0file{im},'C0','C2');
     tmpIm=loadFile(C2file{im});
     rawC2=tmpIm(1:2:end, 1:2:end,:);
@@ -54,7 +57,6 @@ for im=1:imCount
     [C0sizes, C2means, objBoundVol]=indv_cell_coloc(segC0, rawC2_ind);
     
     %% summary results
-    [~, nametmp,~] = fileparts(C0file{im});
     objInf{1, im+1}= strcat("Image_", nametmp);
     objInf{2, im+1} = cellfun(@(x) max(x(:)), segC0); % no cells per obj
     objInf{3, im+1} = cellfun(@(x) nnz(x>0), segC0); % vol obj (cells)
@@ -74,15 +76,13 @@ for im=1:imCount
         save_raw_res(C0file, C0sizes, C2means, im)
     end
     
-    % progress bar
-    frac1 =count/numImages;
-    progressbar(frac1)
 end
 
 if strcmp(vars.savecsv, 'Yes')
     save_summary_res(objInf)
 end
 
+delete(f)
 toc
 % end
 
@@ -260,6 +260,10 @@ vars.plot = questdlg('Plot individual heat maps? ', ...
 vars.saveSegmentation= questdlg('Save segmentation as.tif?', ...
     'Saving segmentation', ...
     'Yes', 'No', 'No');
+
+vars.saveSegmentation= questdlg('Remove edge objects?', ...
+    'Clear edges', ...
+    'Yes', 'No', 'Yes');
 
 prompt = {'Segmentation threshold (a.u.):',...
     'Smoothing width (pixels):',...
