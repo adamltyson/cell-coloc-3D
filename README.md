@@ -1,12 +1,12 @@
 # cell-coloc-3D
-### Adam Tyson | 2018-04-19 | adam.tyson@icr.ac.uk
+#### Adam Tyson | 2018-04-19 | adam.tyson@icr.ac.uk
 
-## Allows manual identification of individual objects in a 3D image. Cells in each object are automatically segmented, and various parameters are returned, including intensity of a secondary marker in a different channel.
+### Allows manual identification of individual objects in a 3D image. Cells in each object are automatically segmented, and various parameters are returned, including intensity of a secondary marker in a different channel.
 
 # Instructions (set up):
 
 1. Export 3D image as multipage tiff (default if <4GB in Slidebook). All images can be saved into the same directory.
-  * Image to segment must end **C0.tif** and the other marker must end **C2.tif** (can obviously be changed).
+    * Image to segment must end **C0.tif** and the other marker must end **C2.tif** (can obviously be changed).
 2. Clone or download repository, and if necessary unzip **cell-coloc-3D-master.zip**.
 3. Place whole directory in the MATLAB path (e.g. C:\\Users\\User\\Documents\\MATLAB).
 4. Open cell-coloc-3D\\cell_coloc_3D and run (F5 or the green "Run" arrow under the "EDITOR" tab). Alternatively, type "cell_coloc_3" into the Command Window and press ENTER
@@ -16,11 +16,11 @@
     * Plot individual heat maps - displays marker intensity, per cell, per object (one figure per image). Useful for testing.
     * Save segmentation - export the segmentation mask (along will all manually cropped objects) as a .tif file to for troubleshooting or later analysis.   
 7. Confirm or change options (the defaults can be changed under "function vars=getVars" in cell_coloc_3D.m
-  * Segmentation threshold -  increase to be more stringent on what is a cell (and vice versa)
-  * Smoothing width - how much to smooth before thresholding (proportional to cell size)
-  * Maximum hole size - how big a "hole" inside a cell should be filled
-  * Largest false cell to remove - how big can bright spots outside the main mass of cells be and still be ignored by the analysis
-  * Watershed threshold - how stringent to be to separate cells after thresholding
+    * Segmentation threshold -  increase to be more stringent on what is a cell (and vice versa)
+    * Smoothing width - how much to smooth before thresholding (proportional to cell size)
+    * Maximum hole size - how big a "hole" inside a cell should be filled
+    * Largest false cell to remove - how big can bright spots outside the main mass of cells be and still be ignored by the analysis
+    * Watershed threshold - how stringent to be to separate cells after thresholding
 
 # Instructions (use):
 
