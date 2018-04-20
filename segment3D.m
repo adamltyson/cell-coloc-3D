@@ -3,17 +3,25 @@ function separatedIm=segment3D(imCell, vars)
 %takes a cell array of individual objects, segments and returns a cell
 %array of separated cells
 
-%% TO DO
-% make ws better
 conn_3d=26; % 3D connectivity
+imScale=2^16; 
+
 for object=1:length(imCell)
 
-    image=imCell{object};
-    im.smoothed=zeros(size(image));
+     image=imCell{object};
+
+    % depth correction
+     for z=1:size(image,3)
+         tmpIm=imScale*double(image(:,:,z));
+         im.scaled(:,:,z)=tmpIm/mean(tmpIm(:));
+     end
+
+    im.smoothed = imgaussfilt3(im.scaled,vars.smoothSigma);
+
+    figure; imshow3D(im.smoothed)
     
-    for z=1:size(image,3)
-        im.smoothed(:,:,z)=imgaussfilt(image(:,:,z),vars.smoothSigma);
-    end
+    im.med = medfilt3(im.smoothed, [5 5 5]);
+    figure; imshow3D(im.med)
     
     levelOtsu = vars.threshScale*multithresh(im.smoothed);
     im.thresh=im.smoothed;
@@ -36,7 +44,11 @@ for object=1:length(imCell)
     
     separatedIm{object} = bwlabeln(im.edgeRem); %opening removes labels
     
+    figure;
+    imshow3D(separatedIm{1,1})
+    
     clear im
+end
 end
 
 function separatedImage=ws3d(im3d, vars, conn_3d)
@@ -56,5 +68,4 @@ watershedBasins = imimposemin(distTran, intMark | extMark);
 % watershed again based on basins
 finalwatershed=double(watershed(watershedBasins));
 separatedImage=im3d.*finalwatershed; % apply ws to thresholded image
-end
 end
