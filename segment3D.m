@@ -17,11 +17,8 @@ for object=1:length(imCell)
      end
 
     im.smoothed = imgaussfilt3(im.scaled,vars.smoothSigma);
-
-    figure; imshow3D(im.smoothed)
     
     im.med = medfilt3(im.smoothed, [5 5 5]);
-    figure; imshow3D(im.med)
     
     levelOtsu = vars.threshScale*multithresh(im.smoothed);
     im.thresh=im.smoothed;
@@ -43,9 +40,6 @@ for object=1:length(imCell)
     end
     
     separatedIm{object} = bwlabeln(im.edgeRem); %opening removes labels
-    
-    figure;
-    imshow3D(separatedIm{1,1})
     
     clear im
 end

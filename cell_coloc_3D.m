@@ -1,4 +1,4 @@
-% function cell_coloc_3D
+function cell_coloc_3D
 %% Adam Tyson | 2018-03-26 | adam.tyson@icr.ac.uk
 % loads C0 image (e.g. DAPI), displays, and allows manual seg of each object
 % each cell is then segmented, and intensity of a secondary marker C2
@@ -87,7 +87,7 @@ if strcmp(vars.savecsv, 'Yes')
 end
 delete(f)
 toc
-% end
+end
 
 %% Internal functions
 
@@ -295,5 +295,3 @@ vars.stamp(vars.stamp==' ') = '';%remove spaces
 
 vars.fontSize=14;
 end
-
-
