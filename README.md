@@ -37,6 +37,11 @@ The script will then loop through all the images in the chosen folder. Each imag
 
   * **marker_mean_intensity_IMAGE.csv** - mean intensity, per cell, per object of the secondary marker
   * **cell_sizes_IMAGE.csv** - volume (in voxels) each cell, per object
-  * **summary_results.csv** - includes the number of cells per object, per image, and the total volume of the objects
+  * **summary_results.csv** - includes various parameters per object and per image (but not per cell). These include:
+    * Number of cells per objects
+    * Volume of object (cells only, and volume of convex bounding)
+    * Density of object (cell volume/total volume)
+    * Mean marker marker intensity
+    * Mean cell size
 
 Once the first image has been analysed, the progress bar will give an estimate of the remaining time.
