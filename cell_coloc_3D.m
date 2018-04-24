@@ -27,7 +27,6 @@ for file=files' % go through all images
     
     % Load images and separate objects
     tmpIm=loadFile(C0file{imCount});
-%     rawC0{imCount}=tmpIm(1:2:end, 1:2:end,:);
     rawC0{imCount}=imresize(tmpIm, vars.zScale);
     [bin_C0{imCount}, objNum{imCount}] = manSeg(rawC0{imCount});
 end
@@ -37,11 +36,13 @@ objInf{2,1}= "Number of cells per object";
 objInf{3,1}= "Total volume of object (nuclei only)";
 objInf{4,1}= "Total volume of object (convex bounding)";
 objInf{5,1}= "Object density";
+objInf{6,1}= "Mean marker intensity per object";
+objInf{7,1}= "Mean cell size per object";
 
 % Load C2 and analyse each object
 f = waitbar(0,'1','Name','Analysing images...');
-
 count=0;
+
 for im=1:imCount
     count=count+1;
     waitbar((count-1)/numImages,f,strcat("Analysing Image: ", num2str(count)))
@@ -66,6 +67,18 @@ for im=1:imCount
     objInf{3, im+1} = cellfun(@(x) nnz(x>0), segC0); % vol obj (cells)
     objInf{4, im+1} = objBoundVol; % vol obj (convex) 
     objInf{5, im+1} = objInf{3, im+1}./objInf{4, im+1}; % density
+    
+    % get mean vals
+    objC2Means=[];
+    objSizeMeans=[];   
+    
+    for obj=1:objNum{im}
+        objC2Means=[objC2Means mean(cell2mat(C0sizes(obj,:)))];     
+        objSizeMeans=[objSizeMeans mean(cell2mat(C2means(obj,:)))];
+    end
+    
+    objInf{6, im+1} = objC2Means;
+    objInf{7, im+1} = objSizeMeans; 
     
     if strcmp(vars.plot, 'Yes')
         res_vis(C2means, vars, C0file{im});
