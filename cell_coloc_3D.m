@@ -1,13 +1,15 @@
-% function cell_coloc_3D
+function cell_coloc_3D
 %% Adam Tyson | 2018-03-26 | adam.tyson@icr.ac.uk
 % loads C0 image (e.g. DAPI), displays, and allows manual seg of each object
-% each cell is then segmented, and colocalisation with C2 marker assessed
+% each cell is then segmented, and intensity of a secondary marker C2
+% (within C0) is measured.
 
 %% TO DO
 % add option to only analyse certain images
 % removal of any big (double) cells
 % update README for new outputs
 % remove multiple (slow) calls to bwconvhull
+% only load subsampled data, rather than loading all first, to not use
 %% IMPROVE SEGMENTATION
 
 vars=getVars;
@@ -25,7 +27,8 @@ for file=files' % go through all images
     
     % Load images and separate objects
     tmpIm=loadFile(C0file{imCount});
-    rawC0{imCount}=tmpIm(1:2:end, 1:2:end,:);
+%     rawC0{imCount}=tmpIm(1:2:end, 1:2:end,:);
+    rawC0{imCount}=imresize(tmpIm, vars.zScale);
     [bin_C0{imCount}, objNum{imCount}] = manSeg(rawC0{imCount});
 end
 
@@ -41,11 +44,11 @@ f = waitbar(0,'1','Name','Analysing images...');
 count=0;
 for im=1:imCount
     count=count+1;
-    waitbar(count/numImages,f,strcat("Analysing Image: ", num2str(count)))
+    waitbar((count-1)/numImages,f,strcat("Analysing Image: ", num2str(count)))
 
     C2file{im} = replace(C0file{im},'C0','C2');
     tmpIm=loadFile(C2file{im});
-    rawC2=tmpIm(1:2:end, 1:2:end,:);
+    rawC2=imresize(tmpIm, vars.zScale);
     clear tmpIm
     
     [rawC0_ind, rawC2_ind] = maskObj(rawC0{im}, rawC2,...
@@ -82,10 +85,9 @@ end
 if strcmp(vars.savecsv, 'Yes')
     save_summary_res(objInf)
 end
-
 delete(f)
 toc
-% end
+end
 
 %% Internal functions
 
@@ -270,22 +272,26 @@ prompt = {'Segmentation threshold (a.u.):',...
     'Smoothing width (pixels):',...
     'Maximum hole size to fill (pixels):',...
     'Largest false cell to remove (pixels):',...
-    'Watershed threshold (a.u.):'};
+    'Watershed threshold (a.u.):',...
+    'Voxel size - XY (um):',...
+    'Voxel size - Z (um):'};
 
 dlg_title = 'Analysis variables';
 num_lines = 1;
-defaultans = {'1.2', '3', '1000', '1000', '4'};
+defaultans = {'1.4', '2', '50', '30', '3.5', '0.065', '0.5'};
 answer = inputdlg(prompt,dlg_title,num_lines,defaultans);
 vars.threshScale=str2double(answer{1});%change sensitivity of threshold
 vars.smoothSigma=str2double(answer{2});% smoothing kernel
 vars.holeSize=str2double(answer{3});% largest hole to fill
 vars.noiseRem=str2double(answer{4}); % smallest obj to remove
 vars.localMaxThresh=str2double(answer{5});% ws int marker threshold
+vars.xySamp=str2double(answer{6});% vox size
+vars.zSamp=str2double(answer{7});% vox size
+
+vars.zScale=vars.xySamp/vars.zSamp;
 
 vars.stamp=num2str(fix(clock)); % date and time
 vars.stamp(vars.stamp==' ') = '';%remove spaces
 
 vars.fontSize=14;
 end
-
-
