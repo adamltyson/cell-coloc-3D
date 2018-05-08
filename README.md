@@ -11,7 +11,7 @@
     * Image to segment must end **C0.tif** and the other marker must end **C2.tif** (can obviously be changed).
 2. Clone or download repository (e.g. **Clone or download -> Download ZIP**, then unzip **cell-coloc-3D-master.zip**).
 3. Place whole directory in the MATLAB path (e.g. C:\\Users\\User\\Documents\\MATLAB).
-4. Open cell-coloc-3D\\cell_coloc_3D and run (F5 or the green "Run" arrow under the "EDITOR" tab). Alternatively, type *cell_coloc_3* into the Command Window and press ENTER.
+4. Open cell-coloc-3D\\cell_coloc_3D and run (F5 or the green "Run" arrow under the "EDITOR" tab). Alternatively, type *cell_coloc_3D* into the Command Window and press ENTER.
 5. Choose a directory that contains the images.
 6. Choose various options:
     * **Save results as csv** - all the results will be exported as a .csv for plotting and statistics
